@@ -2,6 +2,9 @@ let locked = false;
 let currentAngle: number | null = null;
 let lockedAngle: number | null = null;
 
+const STORAGE_KEY = "clinometer_history";
+const SETTINGS_KEY = "clinometer_settings";
+
 interface HistoryEntry {
   angle: number;
   height: number;
@@ -10,7 +13,9 @@ interface HistoryEntry {
   time: string;
 }
 
-const history: HistoryEntry[] = [];
+const history: HistoryEntry[] = JSON.parse(
+  localStorage.getItem(STORAGE_KEY) || "[]",
+);
 
 function isIOS(): boolean {
   return /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -85,6 +90,7 @@ function showResult(): void {
       time: new Date().toLocaleTimeString(),
     };
     history.unshift(entry);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
     renderHistory();
   }
 }
@@ -120,6 +126,14 @@ function startListening(): void {
   window.addEventListener("deviceorientation", handleOrientation);
 }
 
+function saveSettings(): void {
+  const settings = {
+    dist: (document.getElementById("dist") as HTMLInputElement).value,
+    eyeh: (document.getElementById("eyeh") as HTMLInputElement).value,
+  };
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+}
+
 function requestPermission(): void {
   const DOE = DeviceOrientationEvent as any;
   if (typeof DOE.requestPermission === "function") {
@@ -142,15 +156,8 @@ function init(): void {
     showEl("no-sensor", true);
     return;
   }
-  if (
-    isIOS() &&
-    typeof (DeviceOrientationEvent as any).requestPermission === "function"
-  ) {
-    showEl("perm-section", true);
-  } else {
-    startListening();
-  }
 
+  // attach listeners first
   document.getElementById("lock-btn")?.addEventListener("click", toggleLock);
   document.getElementById("reset-btn")?.addEventListener("click", resetLock);
   document
@@ -158,6 +165,33 @@ function init(): void {
     ?.addEventListener("click", requestPermission);
   document.getElementById("dist")?.addEventListener("input", showResult);
   document.getElementById("eyeh")?.addEventListener("input", showResult);
+  document.getElementById("dist")?.addEventListener("change", saveSettings);
+  document.getElementById("eyeh")?.addEventListener("change", saveSettings);
+  document.getElementById("clear-btn")?.addEventListener("click", () => {
+    history.length = 0;
+    localStorage.removeItem(STORAGE_KEY);
+    renderHistory();
+  });
+
+  // restore saved settings
+  const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
+  if (saved.dist)
+    (document.getElementById("dist") as HTMLInputElement).value = saved.dist;
+  if (saved.eyeh)
+    (document.getElementById("eyeh") as HTMLInputElement).value = saved.eyeh;
+
+  if (
+    isIOS() &&
+    typeof (DeviceOrientationEvent as any).requestPermission === "function"
+  ) {
+    // show perm button but also show main UI underneath so it feels less blocked
+    showEl("perm-section", true);
+  } else {
+    startListening();
+  }
+
+  // render any saved history
+  renderHistory();
 }
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
