@@ -53,7 +53,7 @@ function renderHistory(): void {
     <div class="history-row">
       <span class="history-num">#${history.length - i}</span>
       <span class="history-main">${e.height.toFixed(2)} m</span>
-      <span class="muted small">${e.angle.toFixed(1)}° · ${e.dist}m string · ${e.time}</span>
+      <span class="muted small">${e.angle.toFixed(1)}° · ${e.dist}m distance from object · ${e.time}</span>
     </div>
   `,
     )
@@ -70,6 +70,10 @@ function showResult(): void {
   setText("r-angle", lockedAngle.toFixed(1) + "°");
   setText("r-dist", d.toFixed(1) + " m");
   setText("r-eyeh", eyeh.toFixed(2) + " m");
+  setText(
+    "r-equation",
+    `${d.toFixed(1)} × tan(${lockedAngle.toFixed(1)}°) + ${eyeh.toFixed(2)} = ${h.toFixed(2)} m`,
+  );
   showEl("result-card", true);
 
   if (locked) {
@@ -158,6 +162,11 @@ function init(): void {
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div class="wrap">
+    <div class="app-header">
+      <h1>Clinometer</h1>
+      <p>SYDE 362 — Design 3</p>
+    </div>
+
     <div id="perm-section" class="card" style="display:none">
       <p class="muted" style="padding-bottom:1rem">Tap below to allow gyroscope access. Safari will prompt you.</p>
       <button class="btn primary full" id="perm-btn">Enable gyroscope</button>
@@ -199,15 +208,20 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
           <div class="result-big" id="height-val">--</div>
           <div class="muted small">metres</div>
         </div>
+        <div class="equation-box" id="r-equation">--</div>
         <div class="divider"></div>
         <div class="result-row"><span class="muted">Locked angle</span><span id="r-angle" class="val">--</span></div>
-        <div class="result-row"><span class="muted">String length</span><span id="r-dist" class="val">--</span></div>
+        <div class="result-row"><span class="muted">Distance from object</span><span id="r-dist" class="val">--</span></div>
         <div class="result-row"><span class="muted">Eye height</span><span id="r-eyeh" class="val">--</span></div>
         <div class="divider"></div>
         <button class="btn danger full" id="reset-btn">Reset</button>
       </div>
 
-      <p class="muted small center">Hold phone in portrait, tilt up toward top of object, then tap Lock.</p>
+      <ul class="hint-list">
+        <li>Measure and enter the two inputs above</li>
+        <li>Look through the sighting tube at the top of the object</li>
+        <li>Tap Lock when aligned</li>
+      </ul>
 
       <div class="card" id="history-card" style="display:none">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
