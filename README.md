@@ -2,6 +2,8 @@
 
 A smartphone-based digital clinometer for measuring object height. Built for SYDE 362 Project 2 — Design 3.
 
+**Live app:** https://clinometer.vercel.app
+
 ## How it works
 
 The app reads the phone's tilt angle in real time using the browser's `DeviceOrientation` API. A physical sighting tube is mounted along the edge of the phone. The user looks through the tube, tilts the phone until the top of object is visible, then taps **Lock** to freeze the angle. Height is computed using:
@@ -14,21 +16,16 @@ Where `d` is the horizontal distance to the object and `θ` is the locked angle.
 
 ## Setup
 
-### Requirements
+Open **https://clinometer.vercel.app** in Safari on your iPhone. No install required.
 
+### Run locally (optional)
+
+#### Requirements
 - Node.js 18+
 - iPhone running Safari (Chrome on iOS blocks DeviceOrientation)
 - Both your computer and phone on the same WiFi network
-
-### Install
-
 ```bash
 npm install
-```
-
-### Run
-
-```bash
 npm run dev -- --host
 ```
 
