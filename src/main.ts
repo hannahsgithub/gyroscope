@@ -252,8 +252,8 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
       </div>
 
       <ul class="hint-list">
-        <li>Measure and enter the two inputs above</li>
-        <li>Look through the sighting tube at the top of the object</li>
+        <li>Measure and enter the two inputs above with the tape measure</li>
+        <li>Look through the sighting tube, aim to see the top of the object</li>
         <li>Tap Lock when aligned</li>
       </ul>
 
