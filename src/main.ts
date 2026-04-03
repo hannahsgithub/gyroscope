@@ -253,7 +253,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
           <span class="status-dot waiting" id="dot"></span>
           <span id="status-text">waiting for sensor</span>
         </div>
-        <button class="btn primary full" id="lock-btn">Lock angle</button>
+        <button class="btn primary full" id="lock-btn" style="padding: 32px;">Lock angle</button>
       </div>
 
       <div class="card" id="result-card" style="display:none">
